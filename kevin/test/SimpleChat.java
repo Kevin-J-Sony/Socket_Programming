@@ -10,10 +10,11 @@ import java.io.*;
 public class SimpleChat {
 	
 	public static void main(String[] args) throws Exception { 
-		Socket peer;
-		BufferedReader inputFromPeerSocket;
-		PrintWriter outputToSocket;
-		BufferedReader inputFromTerminal;
+		Socket peer = null;
+		BufferedReader inputFromPeerSocket = null;
+		PrintWriter outputToSocket = null;
+		BufferedReader inputFromTerminal = null;
+		String name = "Anonymous";
 
 		/*
 		 * In the case where there is an argument is supplied, there should be only two arguments supplied: the address of the other chat and the port to connect to
@@ -29,7 +30,7 @@ public class SimpleChat {
 			outputToSocket = new PrintWriter(peer.getOutputStream(), true);
 			inputFromTerminal = new BufferedReader(new InputStreamReader(System.in));
 			
-		} else {
+		} else if (args.length == 2) {
 			peer = new Socket(args[0], Integer.parseInt(args[1]));
 
 			inputFromPeerSocket = new BufferedReader(new InputStreamReader(peer.getInputStream()));
@@ -37,6 +38,18 @@ public class SimpleChat {
 			inputFromTerminal = new BufferedReader(new InputStreamReader(System.in));
 
 			outputToSocket.println("Connecting...");
+		} else if (args.length == 3) {
+			peer = new Socket(args[0], Integer.parseInt(args[1]));
+
+			inputFromPeerSocket = new BufferedReader(new InputStreamReader(peer.getInputStream()));
+			outputToSocket = new PrintWriter(peer.getOutputStream(), true);
+			inputFromTerminal = new BufferedReader(new InputStreamReader(System.in));
+
+			outputToSocket.println("Connecting...");
+			
+		} else {
+			System.out.println("Invalid number of arguments");
+			System.exit(0);
 		}
 
 
