@@ -1,4 +1,8 @@
-Client.java
-Server.java
-kevin/test/*.class
-test.*
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build
+
+# Ignore IntelliJ
+.idea

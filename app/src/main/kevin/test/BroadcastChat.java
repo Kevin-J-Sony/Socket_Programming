@@ -1,10 +1,4 @@
-package kevin.test;
-import java.net.InetAddress;
-import java.net.InterfaceAddress;
-import java.net.NetworkInterface;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
+package app.src.main.kevin.test;
 
 public class BroadcastChat implements Runnable {
 	

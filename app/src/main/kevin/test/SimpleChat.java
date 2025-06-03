@@ -1,4 +1,4 @@
-package kevin.test;
+package app.src.main.kevin.test;
 import java.net.*;
 import java.io.*;
 

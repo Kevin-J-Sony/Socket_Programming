@@ -1,4 +1,4 @@
-package kevin.test;
+package app.src.main.kevin.test;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
