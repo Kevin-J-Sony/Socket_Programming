@@ -9,13 +9,15 @@ import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 
 public class EncryptedChatClient {
     public static void main(String[] args) throws Exception {
+        if (args.length != 2) System.exit(-1);
         System.out.println("--- Client: Connecting to Server ---");
-        String hostName = "198.168.0.1";
-        int portNumber = 5000;
-        Socket connect = new Socket(hostName, portNumber);
+        String address = args[0];
+        int portNumber = Integer.parseInt(args[1]);
+        Socket connect = new Socket(address, portNumber);
         System.out.println("--- Client: Connected to Server ---");
 
         DataOutputStream writeToSocket = new DataOutputStream(connect.getOutputStream());
@@ -45,5 +47,6 @@ public class EncryptedChatClient {
         writeToSocket.close();
         readFromSocket.close();
         readFromStdInput.close();
+        connect.close();
     }
 }
