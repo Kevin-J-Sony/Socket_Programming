@@ -15,12 +15,25 @@ repositories {
     mavenCentral()
 }
 
+sourceSets {
+    main {
+        java.setSrcDirs(listOf("src/main"))
+    }
+    test {
+        java.setSrcDirs(listOf("src/test"))
+    }
+}
+
 dependencies {
     // Use JUnit test framework.
     testImplementation(libs.junit)
 
     // This dependency is used by the application.
     implementation(libs.guava)
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -30,7 +43,25 @@ java {
     }
 }
 
+
 application {
     // Define the main class for the application.
-    mainClass = "org.example.App"
+    // mainClass = "org.example.App"
+    mainClass = "kevin.comm.client.EncryptedChatClient"
 }
+
+fun createExecutableJarTask(taskName: String, mainClassName: String) {
+    tasks.register<Jar>(taskName) {
+        group = "build"
+        description = "Build executable JAR for $mainClassName"
+        archiveClassifier.set(taskName)
+        manifest {
+            attributes["Main-Class"] = mainClassName
+        }
+        from(sourceSets["main"].output)
+        dependsOn("classes")
+    }
+}
+
+createExecutableJarTask("clientJar", "kevin.comm.client.EncryptedChatClient")
+createExecutableJarTask("serverJar", "kevin.comm.server.EncryptedChatServer")

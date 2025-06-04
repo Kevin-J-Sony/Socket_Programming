@@ -1,22 +1,24 @@
-package app.src.main.kevin.comm.server;
+package kevin.comm.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.security.*;
 import java.security.KeyPair;
 
+import kevin.comm.crypto.Cryptography;
+import kevin.comm.server.EncryptedServerThread;
 
-public class EncryptedServer {
+public class EncryptedChatServer {
     public static void main(String[] args) throws Exception {
         // Generate Server Public and Private Keys
-        System.out.println("--- Server Key Generation ---");
-        KeyPair serverKey = generateKeyPair();
+        System.out.println("--- Server Main Thread: Key Generation ---");
+        KeyPair serverKey = Cryptography.generateKeyPair();
         PublicKey serverPublicKey = serverKey.getPublic();
         PrivateKey serverPrivateKey = serverKey.getPrivate();
 
         // Wait for Clients to Connect
-        // After 10 connections are made, disconnect
-        int portNumber = 5001;
+        // Once 10 connections are made, end the server
+        int portNumber = 5000;
         while (portNumber < 5010) {
             try (ServerSocket serverSocket = new ServerSocket(portNumber)) {
                 EncryptedServerThread est = new EncryptedServerThread(serverSocket.accept(), serverKey);
@@ -28,15 +30,4 @@ public class EncryptedServer {
             }
         }
     }
-
-    /**
-     * Generate an RSA public and private key pair.
-     * @return A KeyPair object
-     */
-    public static KeyPair generateKeyPair() throws NoSuchAlgorithmException {
-        KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
-        kpg.initialize(2048);
-        return kpg.generateKeyPair();
-    }
-
 }

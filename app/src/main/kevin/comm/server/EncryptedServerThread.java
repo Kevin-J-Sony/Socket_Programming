@@ -1,12 +1,14 @@
-package app.src.main.kevin.comm.server;
+package kevin.comm.server;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import kevin.comm.crypto.Cryptography;
+
+import javax.crypto.SecretKey;
+import java.io.*;
 import java.net.Socket;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+
 
 public class EncryptedServerThread implements Runnable {
     private Socket socket = null;
@@ -24,21 +26,35 @@ public class EncryptedServerThread implements Runnable {
     public void run() {
         try {
             // Get input/output stream of Client Socket
-            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-            DataInputStream in = new DataInputStream(socket.getInputStream());
+            DataOutputStream writeToSocket = new DataOutputStream(socket.getOutputStream());
+            DataInputStream readFromSocket = new DataInputStream(socket.getInputStream());
+            BufferedReader readFromStdInput = new BufferedReader(new InputStreamReader(System.in));
 
             // Send the public key over to the client
             byte[] serverPublicKeyEncoded = serverPublicKey.getEncoded();
-            out.writeInt(serverPublicKeyEncoded.length);
-            out.write(serverPublicKeyEncoded);
+            writeToSocket.writeInt(serverPublicKeyEncoded.length);
+            writeToSocket.write(serverPublicKeyEncoded);
 
             // Receive symmetric key back
-            int length = in.readInt();
-            byte[] encodedSymmetricKey = new byte[length];
-            in.readFully(encodedSymmetricKey, 0, length);
+            int symmetricKeyLength = readFromSocket.readInt();
+            byte[] encodedSymmetricKey = new byte[symmetricKeyLength];
+            readFromSocket.readFully(encodedSymmetricKey, 0, symmetricKeyLength);
 
+            // Decrypt symmetric key
+            byte[] symmetricKeyAsBytes = Cryptography.decryptWithRSA(encodedSymmetricKey, serverPrivateKey);
+            SecretKey symmetricKey = Cryptography.reconstructSymmetricKey(symmetricKeyAsBytes);
 
-            // At this point, both sides have symmetric key, so communication can proceed
+            // For now, read input from Client
+            int inputLength = readFromSocket.readInt();
+            byte[] encodedMessage = new byte[inputLength];
+            readFromSocket.readFully(encodedMessage, 0, inputLength);
+            String message = new String(Cryptography.decryptWithAES(encodedMessage, symmetricKey));
+            System.out.println(message);
+
+            // Close all input streams
+            writeToSocket.close();
+            readFromSocket.close();
+            readFromStdInput.close();
         } catch (Exception e) {
             System.err.printf("Error in thread with port %d: Failed to get input and output\n", socket.getPort());
         }
