@@ -79,7 +79,7 @@ public class Cryptography {
 
     public static byte[] decryptWithAES(byte[] cipherText, SecretKey secretKey) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         Cipher cipher = Cipher.getInstance("AES");
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        cipher.init(Cipher.DECRYPT_MODE, secretKey);
         return cipher.doFinal(cipherText);
     }
 

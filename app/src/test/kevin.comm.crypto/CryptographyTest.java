@@ -22,11 +22,11 @@ class CryptographyTest {
         // Then convert the bytes back into a public key
         PublicKey reconstructedPublicKey = Cryptography.reconstructRSAPublicKey(localPublicKeyAsBytes);
 
-        // Check if the private key is reconstructed properly
+        // Check if the public key is reconstructed properly
         assertEquals(localPublicKey, reconstructedPublicKey);
 
         String originalMessage = "Hello World";
-        byte[] encryptedMessage = Cryptography.encryptWithRSA(originalMessage.getBytes(), reconstructedPublicKey);
+        byte[] encryptedMessage = Cryptography.encryptWithRSA(originalMessage.getBytes(), localPublicKey);
         byte[] decryptedMessage = Cryptography.decryptWithRSA(encryptedMessage, localPrivateKey);
         String reconstructedMessage = new String(decryptedMessage);
 
@@ -34,7 +34,24 @@ class CryptographyTest {
     }
 
     @Test
-    public void testAESEncryptionAndDecryption() {
+    public void testAESEncryptionAndDecryption() throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
+        SecretKey symmetricKey = Cryptography.generateSymmetricKey();
 
+        // First convert symmetric key to bytes
+        byte[] symmetricKeyAsBytes = symmetricKey.getEncoded();
+
+        // Then convert it back into a symmetric key
+        SecretKey reconstructedKey = Cryptography.reconstructSymmetricKey(symmetricKeyAsBytes);
+
+        // Check if the secret key is reconstructed properly
+        assertEquals(symmetricKey, reconstructedKey);
+
+        // Check if encrypting and decrypting a string will return the same string
+        String originalMessage = "Hello World";
+        byte[] encryptedMessage = Cryptography.encryptWithAES(originalMessage.getBytes(), symmetricKey);
+        byte[] decryptedMessage = Cryptography.decryptWithAES(encryptedMessage, symmetricKey);
+        String reconstructedMessage = new String(decryptedMessage);
+
+        assertEquals(originalMessage, reconstructedMessage);
     }
 }

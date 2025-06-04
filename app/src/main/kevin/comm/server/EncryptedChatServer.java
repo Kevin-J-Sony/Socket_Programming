@@ -20,6 +20,7 @@ public class EncryptedChatServer {
         // Once 10 connections are made, end the server
         int portNumber = 5000;
         while (portNumber < 5010) {
+            System.out.printf("Listening on port %d\n", portNumber);
             try (ServerSocket serverSocket = new ServerSocket(portNumber)) {
                 EncryptedServerThread est = new EncryptedServerThread(serverSocket.accept(), serverKey);
                 Thread newClientConnection = new Thread(est);

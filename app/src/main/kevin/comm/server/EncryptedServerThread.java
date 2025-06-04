@@ -8,19 +8,18 @@ import java.net.Socket;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.Base64;
 
 
 public class EncryptedServerThread implements Runnable {
     private Socket socket = null;
-    private KeyPair serverKey = null;
     private PublicKey serverPublicKey = null;
     private PrivateKey serverPrivateKey = null;
 
     public EncryptedServerThread(Socket socket, KeyPair serverKey) {
         this.socket = socket;
-        this.serverKey = serverKey;
-        this.serverPublicKey = this.serverKey.getPublic();
-        this.serverPrivateKey = this.serverKey.getPrivate();
+        this.serverPublicKey = serverKey.getPublic();
+        this.serverPrivateKey = serverKey.getPrivate();
     }
 
     public void run() {
@@ -56,7 +55,7 @@ public class EncryptedServerThread implements Runnable {
             readFromSocket.close();
             readFromStdInput.close();
         } catch (Exception e) {
-            System.err.printf("Error in thread with port %d: Failed to get input and output\n", socket.getPort());
+            System.err.printf("Error in thread with port %d: %s\n", socket.getPort(), e.getMessage());
         }
     }
 }
